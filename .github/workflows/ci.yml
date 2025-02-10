@@ -5,8 +5,11 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
 
 jobs:
   build-and-test:
@@ -29,7 +32,8 @@ jobs:
         run: pytest
 
   docker-build-and-push:
-    needs: build-and-test  # S'exécute uniquement si les tests passent
+    needs: build-and-test  # S'exécute uniquement si les tests réussissent
+    if: github.event_name == 'push'  # Ne s'exécute que lors d'un push sur main
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
